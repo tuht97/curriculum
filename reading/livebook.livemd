@@ -1,3 +1,5 @@
+<!-- livebook:{"persist_outputs":true} -->
+
 # Livebook
 
 ```elixir
@@ -109,6 +111,12 @@ Here you can see an Elixir cell that adds two integers.
 2 + 2
 ```
 
+<!-- livebook:{"output":true} -->
+
+```
+4
+```
+
 You can create an Elixir cell anywhere throughout this course if you want to experiment with some Elixir code. Just be careful not to break existing code examples or affect further examples be rebinding already bound variables.
 
 To create an Elixir cell, hover your cursor between two cells and press the `+Code` button.
@@ -121,7 +129,15 @@ Livebook may change this UI, so if this is instruction is no longer accurate ple
 
 Create an Elixir code cell below. Run some Elixir code such as `1 + 2` in the cell.
 
-<!-- livebook:{"break_markdown":true} -->
+```elixir
+1 + 2
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+3
+```
 
 ### Livebook Shortcuts
 
@@ -171,12 +187,32 @@ Evaluate the cell below. You should see `10` because `5 + 5` equals `10`.
 5 + 5
 ```
 
+<!-- livebook:{"output":true} -->
+
+```
+10
+```
+
 In Elixir, the last value will always be the return value
 
 For example, this cell returns `10`, not `5`.
 
 ```elixir
 5
+10
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+warning: code block contains unused literal 5 (remove the literal or assign it to _ to avoid warnings)
+  c:/Workspace/curriculum-2.0.0/reading/livebook.livemd#cell:p6umjbajvzzo4rrdqnhrew4izxmhmk5a:1
+
+```
+
+<!-- livebook:{"output":true} -->
+
+```
 10
 ```
 
@@ -193,8 +229,20 @@ Here are two empty Elixir cells. By default, an empty cell returns `nil`.
 
 ```
 
+<!-- livebook:{"output":true} -->
+
+```
+nil
+```
+
 ```elixir
 
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+nil
 ```
 
 Evaluate the first cell and notice that the cell below becomes **Stale**.
@@ -208,7 +256,13 @@ Evaluate the Elixir cell below, then change `5` to `4` to see **Evaluated** chan
 Re-evaluate the cell to see *Evaluated\** change to **Evaluated**.
 
 ```elixir
-5
+4
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+4
 ```
 
 Sometimes order of evaluation can cause issues in Exercises by using a stale version of an Elixir cell. Make sure to evaluate a code cell whenever you make a change.
@@ -222,7 +276,13 @@ Try uncommenting the following code (Remove the `#` character) then press <kbd>C
 Notice that the `1 + 1` code moves to the left.
 
 ```elixir
-# 1 + 1
+1 + 1
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+2
 ```
 
 If you have not evaluated any Elixir code cells, you may see a warning.
