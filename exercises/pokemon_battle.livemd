@@ -125,9 +125,30 @@ defmodule Pokemon do
       iex> Pokemon.attack(attacker, defender)
       %Pokemon{name: "Bulbasaur", type: :grass, health: 10.0, attack: 5, speed: 20}
   """
-  defstruct []
+  defstruct [:name, :type, :health, :attack, :speed]
 
   def attack(attacker, defender) do
+    type_advantage =
+      case {attacker.type, defender.type} do
+        {:fire, :grass} -> 2.0
+        {:grass, :water} -> 2.0
+        {:water, :fire} -> 2.0
+        {:fire, :water} -> 0.5
+        {:grass, :fire} -> 0.5
+        {:water, :grass} -> 0.5
+        _ -> 1.0
+      end
+
+    dmg = attacker.attack * type_advantage
+
+    %Pokemon{
+      defender
+      | name: defender.name,
+        type: defender.type,
+        health: defender.health - dmg,
+        attack: defender.attack,
+        speed: defender.speed
+    }
   end
 end
 ```
@@ -135,7 +156,9 @@ end
 Consider using the following Elixir cell to test your solution.
 
 ```elixir
-
+attacker = %Pokemon{name: "Charmander", type: :fire, health: 20.0, attack: 5, speed: 20}
+defender = %Pokemon{name: "Bulbasaur", type: :grass, health: 20.0, attack: 5, speed: 20}
+Pokemon.attack(attacker, defender)
 ```
 
 ### Pokemon Instances
@@ -186,7 +209,13 @@ Pokemon.attack(charmander, bulbasaur)
 Enter your solution below.
 
 ```elixir
+charmander = %Pokemon{name: "Charmander", type: :fire, health: 20.0, attack: 5, speed: 20}
+bulbasaur = %Pokemon{name: "Bulbasar", type: :grass, health: 20.0, attack: 5, speed: 20}
+squirtle = %Pokemon{name: "Squirtle", type: :water, health: 20.0, attack: 5, speed: 20}
 
+a = Pokemon.attack(charmander, bulbasaur)
+b = Pokemon.attack(charmander, squirtle)
+c = Pokemon.attack(bulbasaur, squirtle)
 ```
 
 ## Commit Your Progress
