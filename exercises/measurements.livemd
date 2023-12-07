@@ -82,6 +82,15 @@ defmodule Measurements do
     [10, -10, 30]
   """
   def increments(measurements) do
+    measurements
+    |> Enum.reduce({[], nil}, fn x, {acc, prev} ->
+      case prev do
+        nil -> {acc, x}
+        _ -> {[x - prev | acc], x}
+      end
+    end)
+    |> elem(0)
+    |> Enum.reverse()
   end
 
   @doc """
@@ -100,6 +109,8 @@ defmodule Measurements do
     1
   """
   def increased(measurements) do
+    increments(measurements)
+    |> Enum.reduce(0, fn x, acc -> if(x > 0, do: acc + 1, else: acc) end)
   end
 
   @doc """
@@ -115,6 +126,8 @@ defmodule Measurements do
     40
   """
   def increased_by(measurements) do
+    increments(measurements)
+    |> Enum.reduce(0, fn x, acc -> if(x > 0, do: acc + x, else: acc) end)
   end
 
   @doc """
@@ -130,6 +143,8 @@ defmodule Measurements do
     6.0
   """
   def average(measurements) do
+    {sum, len} = Enum.reduce(measurements, {0, 0}, fn x, {sum, len} -> {sum + x, len + 1} end)
+    sum / len
   end
 end
 ```
