@@ -99,6 +99,7 @@ defmodule Filter do
     [1, 2]
   """
   def integers(list) do
+    Enum.filter(list, fn int -> is_integer(int) end)
   end
 
   @doc """
@@ -110,6 +111,7 @@ defmodule Filter do
     [1.2, 3.2]
   """
   def floats(list) do
+    Enum.filter(list, fn float -> is_float(float) end)
   end
 
   @doc """
@@ -121,6 +123,7 @@ defmodule Filter do
     [1, 2, 1.2, 3.2]
   """
   def numbers(list) do
+    Enum.filter(list, fn numb -> is_number(numb) end)
   end
 
   @doc """
@@ -132,6 +135,7 @@ defmodule Filter do
     [:first_atom, :second_atom]
   """
   def atoms(list) do
+    Enum.filter(list, fn atom -> is_atom(atom) end)
   end
 
   @doc """
@@ -143,6 +147,7 @@ defmodule Filter do
     [[], [1, 2], [4, 5, 6]]
   """
   def lists(list) do
+    Enum.filter(list, fn item -> is_list(item) end)
   end
 
   @doc """
@@ -154,6 +159,7 @@ defmodule Filter do
     [%{}, %{key: "value"}]
   """
   def maps(list) do
+    Enum.filter(list, fn map -> is_map(map) end)
   end
 
   @doc """
@@ -165,6 +171,7 @@ defmodule Filter do
     [[], [key: "value"]]
   """
   def keyword_lists(list) do
+    Enum.filter(list, fn keyword -> Keyword.keyword?(keyword) end)
   end
 end
 ```
