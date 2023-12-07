@@ -162,6 +162,9 @@ defmodule TicTacToe do
       "A"
   """
   def at(board, coordinate) do
+    {x, y} = coordinate
+    row = Enum.at(board, 2 - y)
+    Enum.at(row, x)
   end
 
   @doc """
@@ -170,7 +173,7 @@ defmodule TicTacToe do
   ## Examples
 
       iex> board = [
-      ...> [nil, nil, nil], 
+      ...> [nil, nil, nil],
       ...> [nil, nil, nil],
       ...> [nil, nil, nil]
       ...> ]
@@ -180,6 +183,72 @@ defmodule TicTacToe do
       [[nil, nil, nil], [nil, "O", nil], [nil, nil, nil]]
   """
   def fill(board, coordinate, symbol) do
+    {x, y} = coordinate
+    row = Enum.at(board, 2 - y)
+    updated_row = List.replace_at(row, x, symbol)
+    List.replace_at(board, 2 - y, updated_row)
+  end
+
+  @doc """
+  Determine if a player has won the game.
+
+  ## Examples
+
+    Row Wins:
+
+    iex> TicTacToe.winner([["X", "X", "X"], [nil, nil, nil], [nil, nil, nil]])
+    "X"
+    iex> TicTacToe.winner([[nil, nil, nil], ["X", "X", "X"], [nil, nil, nil]])
+    "X"
+    iex> TicTacToe.winner([[nil, nil, nil], [nil, nil, nil], ["X", "X", "X"]])
+    "X"
+
+    Column Wins:
+
+    iex> TicTacToe.winner([["X", nil, nil], ["X", nil, nil], ["X", nil, nil]])
+    "X"
+    iex> TicTacToe.winner([[nil, "X", nil], [nil, "X", nil], [nil, "X", nil]])
+    "X"
+    iex> TicTacToe.winner([[nil, nil, "X"], [nil, nil, "X"], [nil, nil, "X"]])
+    "X"
+
+    Diagonal Wins
+
+    iex> TicTacToe.winner([["X", nil, nil], [nil, "X", nil], [nil, nil, "X"]])
+    "X"
+    iex> TicTacToe.winner([[nil, nil, "X"], [nil, "X", nil], ["X", nil, nil]])
+    "X"
+
+    No Winner
+
+    iex> TicTacToe.winner([[nil, nil, nil], [nil, nil, nil], [nil, nil, nil]])
+    nil
+    iex> TicTacToe.winner([[nil, "X", nil], [nil, "X", nil], [nil, nil, nil]])
+    nil
+
+  """
+
+  def rows(board), do: board
+  def columns(board), do: Enum.flat_map(Enum.zip(board), &[Tuple.to_list(&1)])
+
+  def diagonals(board) do
+    [
+      Enum.map(0..2, &Enum.at(Enum.at(board, &1), &1)),
+      Enum.map(0..2, &Enum.at(Enum.at(board, &1), 2 - &1))
+    ]
+  end
+
+  def winner(board) do
+    Enum.find_value(
+      [rows(board), columns(board), diagonals(board)]
+      |> Enum.flat_map(& &1),
+      &winning?(&1)
+    )
+  end
+
+  def winning?(line) do
+    [h | t] = line
+    if not Enum.any?(line, &(&1 == nil)) and Enum.all?(t, &(&1 == h)), do: h
   end
 end
 ```
