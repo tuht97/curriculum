@@ -203,7 +203,11 @@ end)
 </details>
 
 ```elixir
+split_numb = Integer.digits(1_234_321)
 
+Enum.reduce(split_numb, %{}, fn char, map_accumulator ->
+  Map.update(map_accumulator, char, 1, fn current -> current + 1 end)
+end)
 ```
 
 ## Multiple Accumulators
