@@ -121,6 +121,10 @@ defmodule Timeline do
     [9, 12, 2]
   """
   def from_dates(dates) do
+    dates
+    |> Enum.sort()
+    |> Enum.chunk_every(2, 1, :discard)
+    |> Enum.map(fn [d1, d2] -> Date.diff(d2, d1) end)
   end
 
   @doc """
@@ -139,6 +143,12 @@ defmodule Timeline do
     [9, 12, 2]
   """
   def from_strings(date_strings) do
+    date_strings |> Enum.map(&(&1 |> string_to_date())) |> from_dates()
+  end
+
+  def string_to_date(string) do
+    [year, month, day] = String.split(string, "-")
+    Date.new!(String.to_integer(year), String.to_integer(month), String.to_integer(day))
   end
 end
 ```
