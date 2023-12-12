@@ -129,6 +129,7 @@ defmodule PhoneNumber do
     "123-123-1234 456-456-4567"
   """
   def parse(string) do
+    Regex.replace(~r/\(?(\d{3})\)?[-\s]?(\d{3})[-\s]?(\d{4})/, string, "\\1-\\2-\\3")
   end
 end
 ```
