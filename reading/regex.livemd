@@ -361,7 +361,9 @@ end)
 </details>
 
 ```elixir
-
+Regex.replace(~r/(\d{3}-)\d{3}-\d{4}/, "999-999-9999", fn _match, group1 ->
+  group1 <> "XXX-" <> "XXXX"
+end)
 ```
 
 ## Options
