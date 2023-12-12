@@ -153,13 +153,13 @@ You'll notice the **Process** memory consumption will increase, and eventually, 
 You may need to click the **Connect** button to reconnect the Elixir runtime.
 
 ```elixir
-# defmodule Body Do
-#   def recursion([head | tail]) Do
-#     recursion(tail ++ tail) ++ [head]
-#   end
-# end
+defmodule Body do
+  def recursion([head | tail]) do
+    recursion(tail ++ tail) ++ [head]
+  end
+end
 
-# Body.recursion([1,2,3])
+Body.recursion([1, 2, 3])
 ```
 
 Make sure you comment out the code above, otherwise Livebook will keep disconnecting.
@@ -260,6 +260,12 @@ end
 
 ```elixir
 defmodule CountDown do
+  def count(0), do: IO.puts(0)
+
+  def count(n) do
+    IO.puts(n)
+    count(n - 1)
+  end
 end
 ```
 
@@ -323,6 +329,17 @@ end
 
 ```elixir
 defmodule CountBetween do
+  def count(finish, finish), do: IO.puts(finish)
+
+  def count(start, finish) when start < finish do
+    IO.puts(start)
+    count(start + 1, finish)
+  end
+
+  def count(start, finish) when start > finish do
+    IO.puts(start)
+    count(start - 1, finish)
+  end
 end
 ```
 
