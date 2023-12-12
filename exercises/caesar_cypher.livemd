@@ -133,13 +133,9 @@ defmodule CaesarCypher do
   def encode(string, key) do
     String.to_charlist(string)
     |> Enum.map(fn char ->
-      overflow = char + key > ?z
-
-      if overflow do
-        ?a + rem(char + key, ?z) - 1
-      else
-        char + key
-      end
+      base = if char in ?a..?z, do: ?a, else: ?A
+      shift = (char - base + key) |> rem(26)
+      shift + base
     end)
     |> List.to_string()
   end
