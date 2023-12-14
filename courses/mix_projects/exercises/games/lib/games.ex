@@ -1,18 +1,25 @@
 defmodule Games do
-  @moduledoc """
-  Documentation for `Games`.
-  """
+  def main(args) do
+    choice =
+      IO.gets("""
+      What game would you like to play?
+      1. Guessing Game
+      2. Rock Paper Scissors
+      3. Wordle
 
-  @doc """
-  Hello world.
+      enter "stop" to exit
+      """)
+      |> String.trim()
 
-  ## Examples
+    case choice do
+      "1" -> Games.GuessingGame.play()
+      "2" -> Games.RockPaperScissors.play()
+      "3" -> Games.Wordle.play()
+      "stop" -> IO.puts("Exiting the program!")
+    end
 
-      iex> Games.hello()
-      :world
-
-  """
-  def hello do
-    :world
+    unless choice == "stop" do
+      main(args)
+    end
   end
 end
