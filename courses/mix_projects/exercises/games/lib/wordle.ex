@@ -1,4 +1,20 @@
 defmodule Games.Wordle do
+  @moduledoc """
+   Documentation for `Games.Wordle`.
+  """
+  @doc """
+  feedback.
+  ## Examples
+      iex> Games.Wordle.feedback("aaaaa", "aaaaa")
+      [:green, :green, :green, :green, :green]
+      iex> Games.Wordle.feedback("aaaaa", "aaaab")
+      [:green, :green, :green, :green, :grey]
+      iex> Games.Wordle.feedback("abdce", "edcba")
+      [:yellow, :yellow, :yellow, :yellow, :yellow]
+      iex> Games.Wordle.feedback("aaabb", "xaaaa")
+      [:grey, :green, :green, :yellow, :grey]
+  """
+  @spec feedback(String.t(), String.t()) :: list()
   def feedback(answer, guess) do
     answer_list = String.to_charlist(answer)
     guess_list = String.to_charlist(guess)
@@ -26,11 +42,13 @@ defmodule Games.Wordle do
     Enum.reverse(feedback_list)
   end
 
+  @spec play() :: :ok
   def play() do
     word = ["toast", "tarts", "hello", "beats"] |> Enum.random()
     play(word, 6)
   end
 
+  @spec play(String.t(), number()) :: :ok
   defp play(word, tries) do
     if tries > 0 do
       IO.puts("Enter a five letter word:")

@@ -1,4 +1,8 @@
 defmodule Games.RockPaperScissors do
+  @moduledoc """
+   Documentation for `Games.RockPaperScissors`.
+  """
+  @spec play :: :ok
   def play do
     rand_choice = Enum.random(["rock", "paper", "scissors"])
     guess = IO.gets("Choose rock, paper, or scissors:") |> String.trim()

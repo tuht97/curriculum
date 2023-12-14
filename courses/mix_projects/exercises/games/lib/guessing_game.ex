@@ -1,4 +1,7 @@
 defmodule Games.GuessingGame do
+  @moduledoc """
+   Documentation for `Games.GuessingGame`.
+  """
   def play do
     rand_numb = Enum.random(1..10)
     IO.puts("Guess a number between 1 and 10:")
