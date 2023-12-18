@@ -94,6 +94,12 @@ defmodule FileSearch do
   ["file1.txt", "file2.txt", "file3.txt", "file4.txt"]
   """
   def all(folder) do
+    File.ls!(folder)
+    |> Enum.flat_map(fn
+      file ->
+        path = Path.join(folder, file)
+        if File.dir?(path), do: all(path), else: [path]
+    end)
   end
 
   @doc """
@@ -124,6 +130,8 @@ defmodule FileSearch do
   }
   """
   def by_extension(folder) do
+    all(folder)
+    |> Enum.group_by(&Path.extname/1, &Path.basename/1)
   end
 end
 ```
