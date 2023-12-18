@@ -134,6 +134,36 @@ defprotocol Math do
 end
 
 # Define Implementations...
+
+defimpl Math, for: Integer do
+  def add(integer1, integer2) do
+    integer1 + integer2
+  end
+
+  def subtract(integer1, integer2) do
+    integer1 - integer2
+  end
+end
+
+defimpl Math, for: BitString do
+  def add(val1, val2) do
+    val1 <> val2
+  end
+
+  def subtract(val1, val2) do
+    (String.split(val1, "") -- String.split(val2, "")) |> Enum.join()
+  end
+end
+
+defimpl Math, for: List do
+  def add(val1, val2) do
+    val1 ++ val2
+  end
+
+  def subtract(val1, val2) do
+    val1 -- val2
+  end
+end
 ```
 
 ## Commit Your Progress
