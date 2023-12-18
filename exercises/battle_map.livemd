@@ -64,6 +64,10 @@ end
 defmodule Barbarian do
   defstruct []
 end
+
+defmodule Archer do
+  defstruct []
+end
 ```
 
 ## Barbarian
@@ -100,6 +104,12 @@ end
 
 ```elixir
 # Implementation Goes Here:
+defimpl Character, for: Barbarian do
+  def can_attack?(_character, {x1, y1}, {x2, y2}) do
+    distance = max(abs(x2 - x1), abs(y2 - y1))
+    distance <= 2
+  end
+end
 
 # You May Use The Following Test Suite To Validate Your Solution.
 ExUnit.start(auto_run: false)
@@ -163,6 +173,11 @@ Create a `Wizard` implementation for the `Character` protocol.
 
 ```elixir
 # Implementation Goes Here:
+defimpl Character, for: Wizard do
+  def can_attack?(_character, {x1, y1}, {x2, y2}) do
+    x1 == x2 || y1 == y2 || abs(x2 - x1) == abs(y2 - y1)
+  end
+end
 
 # You May Use The Following Test Suite To Validate Your Solution.
 ExUnit.start(auto_run: false)
@@ -214,7 +229,31 @@ true
 Implement your custom character below.
 
 ```elixir
+defimpl Character, for: Archer do
+  def can_attack?(_character, {x1, y1}, {x2, y2}) do
+    dx = abs(x1 - x2)
+    dy = abs(y1 - y2)
+    (dx == 3 and dy <= 3) or (dy == 3 and dx <= 3)
+  end
+end
 
+ExUnit.start(auto_run: false)
+
+defmodule ArcherTests do
+  use ExUnit.Case
+
+  describe "Archer" do
+    test "can only attack in a 3 radius square" do
+      assert Character.can_attack?(%Archer{}, {4, 4}, {7, 7})
+    end
+
+    test "cannot attack beyond or under 3 radius square of current position" do
+      refute Character.can_attack?(%Archer{}, {4, 4}, {6, 6})
+    end
+  end
+end
+
+ExUnit.run()
 ```
 
 ## Commit Your Progress
