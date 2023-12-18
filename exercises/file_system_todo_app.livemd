@@ -79,6 +79,15 @@ defmodule TodoList do
       []
   """
   def list do
+    if File.exists?("todolist.txt") do
+      {:ok, content} = File.read("todolist.txt")
+
+      content
+      |> :erlang.binary_to_term()
+      |> String.split("\n", trim: true)
+    else
+      []
+    end
   end
 
   @doc """
@@ -92,6 +101,8 @@ defmodule TodoList do
       ["task 2", "task 1"]
   """
   def add(item) do
+    new_list = [item | list()]
+    File.write("todolist.txt", :erlang.term_to_binary(new_list))
   end
 
   @doc """
@@ -105,6 +116,9 @@ defmodule TodoList do
       ["task 2", "task 1"]
   """
   def complete(item) do
+    current_list = list()
+    new_list = List.delete(current_list, item)
+    File.write("todolist.txt", :erlang.term_to_binary(new_list))
   end
 end
 ```
