@@ -151,7 +151,7 @@ after it is called.
 ```elixir
 pid = spawn(fn -> IO.puts("I was called") end)
 
-Process.sleep(100)
+Process.sleep(5000)
 
 Process.alive?(pid) || IO.puts("I am dead :(")
 ```
