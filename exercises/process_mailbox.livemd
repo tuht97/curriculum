@@ -139,7 +139,31 @@ defmodule Mailbox do
       "Hello!"
   """
   def loop(state \\ []) do
+    receive do
+      {:send, message} ->
+        loop([message | state])
+
+      {:read, pid} ->
+        if Enum.empty?(state) do
+          send(pid, :empty)
+          loop([])
+        else
+          [head | tail] = state
+          send(pid, head)
+          loop(tail)
+        end
+    end
   end
+end
+```
+
+```elixir
+mailbox_process = spawn(fn -> Mailbox.loop() end)
+send(mailbox_process, {:send, "You've got mail!"})
+send(mailbox_process, {:read, self()})
+
+receive do
+  message -> message
 end
 ```
 
