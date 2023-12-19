@@ -109,11 +109,39 @@ defmodule Timer do
   use GenServer
 
   def start_link(_opts) do
+    GenServer.start_link(__MODULE__, 0)
   end
 
-  def get_time(timer_pid) do
+  def seconds(timer_pid) do
+    GenServer.call(timer_pid, :get_time)
+  end
+
+  @impl true
+  def init(_) do
+    Process.send_after(self(), :tick, 1000)
+    {:ok, 0}
+  end
+
+  @impl true
+  def handle_call(:get_time, _from, state) do
+    {:reply, state, state}
+  end
+
+  @impl true
+  def handle_info(:tick, state) do
+    Process.send_after(self(), :tick, 1000)
+    {:noreply, state + 1}
   end
 end
+```
+
+```elixir
+{:ok, pid} = Timer.start_link([])
+Timer.seconds(pid)
+# 0
+Process.sleep(1500)
+Timer.seconds(pid)
+# 1
 ```
 
 ## Commit Your Progress
