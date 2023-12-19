@@ -140,6 +140,11 @@ defmodule CounterServer do
   end
 
   @impl true
+  def handle_cast(:decrement, state) do
+    {:noreply, state - 1}
+  end
+
+  @impl true
   def handle_call(:get_count, _from, state) do
     # `response` bound for sake of clarity.
     response = state
