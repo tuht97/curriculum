@@ -11,7 +11,7 @@ defmodule Stack do
   use GenServer
 
   def start_link(stack) do
-    GenServer.start_link(__MODULE__, stack)
+    GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
   @doc """
@@ -51,12 +51,14 @@ defmodule Stack do
 
   @impl true
   def handle_call(:pop, _from, state) do
-    if state == [] do
-      {:reply, nil, state}
-    else
-      [h | t] = state
-      {:reply, h, t}
-    end
+    # if state == [] do
+    #   {:reply, nil, state}
+    # else
+    #   [h | t] = state
+    #   {:reply, h, t}
+    # end
+    [h | t] = state
+    {:reply, h, t}
   end
 
   @impl true

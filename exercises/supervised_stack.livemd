@@ -74,7 +74,7 @@ Uncomment the following code to watch the `Stack` crash.
 
 ```elixir
 # {:ok, pid} = GenServer.start_link(Stack, [])
-# GenServer.call(stack_pid, :pop)
+# GenServer.call(pid, :pop)
 ```
 
 Normally, we could handle this by using control flow. For example, we could make another `handle_call/3` function clause for when the stack is empty.
