@@ -216,12 +216,16 @@ defmodule CountDown do
 
   # Client
 
-  def start_link(_opts) do
-    # Implementation
+  def start_link(state) do
+    GenServer.start_link(__MODULE__, state)
   end
 
   def decrement(pid) do
-    # Implementation
+    GenServer.call(pid, :decrement)
+  end
+
+  def get_count(pid) do
+    GenServer.call(pid, :get_count)
   end
 
   # Server
@@ -233,12 +237,12 @@ defmodule CountDown do
 
   @impl true
   def handle_call(:get_count, _from, state) do
-    # Implementation
+    {:reply, state, state}
   end
 
   @impl true
   def handle_call(:decrement, _from, state) do
-    # Implementation
+    {:reply, state - 1, state - 1}
   end
 end
 
@@ -248,7 +252,11 @@ defmodule CounterTest do
   use ExUnit.Case
 
   # implement your test
-  test "decrement/1"
+  test "decrement/1" do
+    {:ok, pid} = GenServer.start_link(CountDown, 1)
+    GenServer.call(pid, :decrement)
+    assert CountDown.get_count(pid) == 0
+  end
 end
 
 ExUnit.run()
