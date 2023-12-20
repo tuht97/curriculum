@@ -15,6 +15,7 @@ defmodule Games.GuessingGame do
 
     cond do
       guess_numb == rand_numb ->
+        Games.ScoreTracker.add_points(5)
         IO.puts("Correct!")
 
       guess_numb < rand_numb ->

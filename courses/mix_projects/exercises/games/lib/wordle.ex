@@ -59,6 +59,7 @@ defmodule Games.Wordle do
 
         if guess == word do
           IO.puts("You guessed it! The word was #{word}.")
+          Games.ScoreTracker.add_points(25)
           IO.puts("You win!")
         else
           feedback = feedback(word, guess)
