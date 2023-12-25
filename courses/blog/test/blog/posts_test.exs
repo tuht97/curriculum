@@ -8,7 +8,7 @@ defmodule Blog.PostsTest do
 
     import Blog.PostsFixtures
 
-    @invalid_attrs %{title: nil, body: nil}
+    @invalid_attrs %{title: nil, subtitle: nil, content: nil}
 
     test "list_posts/0 returns all posts" do
       post = post_fixture()
@@ -21,11 +21,12 @@ defmodule Blog.PostsTest do
     end
 
     test "create_post/1 with valid data creates a post" do
-      valid_attrs = %{title: "some title", body: "some body"}
+      valid_attrs = %{title: "some title", subtitle: "some subtitle", content: "some content"}
 
       assert {:ok, %Post{} = post} = Posts.create_post(valid_attrs)
       assert post.title == "some title"
-      assert post.body == "some body"
+      assert post.subtitle == "some subtitle"
+      assert post.content == "some content"
     end
 
     test "create_post/1 with invalid data returns error changeset" do
@@ -34,11 +35,12 @@ defmodule Blog.PostsTest do
 
     test "update_post/2 with valid data updates the post" do
       post = post_fixture()
-      update_attrs = %{title: "some updated title", body: "some updated body"}
+      update_attrs = %{title: "some updated title", subtitle: "some updated subtitle", content: "some updated content"}
 
       assert {:ok, %Post{} = post} = Posts.update_post(post, update_attrs)
       assert post.title == "some updated title"
-      assert post.body == "some updated body"
+      assert post.subtitle == "some updated subtitle"
+      assert post.content == "some updated content"
     end
 
     test "update_post/2 with invalid data returns error changeset" do

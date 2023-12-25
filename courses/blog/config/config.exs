@@ -20,7 +20,7 @@ config :blog, BlogWeb.Endpoint,
     layout: false
   ],
   pubsub_server: Blog.PubSub,
-  live_view: [signing_salt: "0eP5HQEg"]
+  live_view: [signing_salt: "sRTDNaEl"]
 
 # Configures the mailer
 #
