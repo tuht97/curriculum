@@ -4,8 +4,9 @@ defmodule BlogWeb.PostController do
   alias Blog.Posts
   alias Blog.Posts.Post
 
-  def index(conn, _params) do
-    posts = Posts.list_posts()
+  def index(conn, params) do
+    title = params["title"]
+    posts = if title, do: Posts.list_posts(title), else: Posts.list_posts()
     render(conn, :index, posts: posts)
   end
 

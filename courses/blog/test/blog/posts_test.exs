@@ -15,6 +15,29 @@ defmodule Blog.PostsTest do
       assert Posts.list_posts() == [post]
     end
 
+    test "list_posts/1 filters posts by partial and case-insensitive title" do
+      post = post_fixture(title: "Title")
+
+      # non-matching
+      assert Posts.list_posts("Non-Matching") == []
+      # exact match
+      assert Posts.list_posts("Title") == [post]
+      # partial match end
+      assert Posts.list_posts("tle") == [post]
+      # partial match front
+      assert Posts.list_posts("Titl") == [post]
+      # partial match middle
+      assert Posts.list_posts("itl") == [post]
+      # case insensitive lower
+      assert Posts.list_posts("title") == [post]
+      # case insensitive upper
+      assert Posts.list_posts("TITLE") == [post]
+      # case insensitive and partial match
+      assert Posts.list_posts("ITL") == [post]
+      # empty
+      assert Posts.list_posts("") == [post]
+    end
+
     test "get_post!/1 returns the post with given id" do
       post = post_fixture()
       assert Posts.get_post!(post.id) == post
@@ -35,7 +58,12 @@ defmodule Blog.PostsTest do
 
     test "update_post/2 with valid data updates the post" do
       post = post_fixture()
-      update_attrs = %{title: "some updated title", subtitle: "some updated subtitle", content: "some updated content"}
+
+      update_attrs = %{
+        title: "some updated title",
+        subtitle: "some updated subtitle",
+        content: "some updated content"
+      }
 
       assert {:ok, %Post{} = post} = Posts.update_post(post, update_attrs)
       assert post.title == "some updated title"
