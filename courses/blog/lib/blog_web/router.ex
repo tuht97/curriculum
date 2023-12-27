@@ -19,6 +19,7 @@ defmodule BlogWeb.Router do
 
     get("/", PageController, :home)
     resources("/posts", PostController)
+    resources("/comments", CommentController)
   end
 
   # Other scopes may use custom stacks.
