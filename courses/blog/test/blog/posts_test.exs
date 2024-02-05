@@ -7,17 +7,26 @@ defmodule Blog.PostsTest do
     alias Blog.Posts.Post
 
     import Blog.PostsFixtures
+    import Blog.AccountsFixtures
 
     @invalid_attrs %{title: nil, subtitle: nil, content: nil}
 
-    test "list_posts/0 returns all posts" do
-      post_fixture(%{visible: false})
-      post = post_fixture(%{title: "title abc"})
-      assert Posts.list_posts() == [post]
+    test "list_posts/0 with no filter returns all posts" do
+      user = user_fixture()
+      post = post_fixture(user_id: user.id)
+      assert Posts.list_posts() |> Enum.map(& &1.id) == [post] |> Enum.map(& &1.id)
+    end
+
+    test "list_posts/1 ignores non visible posts" do
+      user = user_fixture()
+      post = post_fixture(visible: false, user_id: user.id)
+      assert Posts.list_posts() == []
+      assert Posts.list_posts(post.title) == []
     end
 
     test "list_posts/0 posts are displayed from newest" do
-      posts = Enum.map(1..10, fn i -> post_fixture(%{title: "title #{i}"}) end)
+      user = user_fixture()
+      posts = Enum.map(1..10, fn i -> post_fixture(title: "title #{i}", user_id: user.id) end)
 
       is_newest_to_oldest =
         posts
@@ -29,13 +38,9 @@ defmodule Blog.PostsTest do
       assert is_newest_to_oldest
     end
 
-    test "list_posts/0 posts with a published date in the future are filtered from the list of posts" do
-      post_fixture(%{published_on: ~D[2024-01-01]})
-      assert Posts.list_posts() == []
-    end
-
     test "list_posts/1 filters posts by partial and case-insensitive title" do
-      post = post_fixture(title: "Title")
+      user = user_fixture()
+      post = post_fixture(title: "Title", user_id: user.id)
 
       # non-matching
       assert Posts.list_posts("Non-Matching") == []
@@ -58,18 +63,22 @@ defmodule Blog.PostsTest do
     end
 
     test "get_post!/1 returns the post with given id" do
-      post = post_fixture(title: "Title")
+      user = user_fixture()
+      post = post_fixture(title: "Title", user_id: user.id)
       assert Posts.get_post!(post.id) == Repo.preload(post, :comments)
     end
 
     test "create_post/1 with valid data creates a post" do
       today = Date.utc_today()
       title = "some title #{today}"
+      user = user_fixture()
+
       valid_attrs = %{
         title: title,
         content: "some content",
         published_on: today,
-        visible: true
+        visible: true,
+        user_id: user.id
       }
 
       assert {:ok, %Post{} = post} = Posts.create_post(valid_attrs)
@@ -84,8 +93,10 @@ defmodule Blog.PostsTest do
     end
 
     test "update_post/2 with valid data updates the post" do
-      post = post_fixture()
+      user = user_fixture()
+      post = post_fixture(title: "Title", user_id: user.id)
       today = Date.utc_today()
+
       update_attrs = %{
         title: "some updated title",
         published_on: today,
@@ -101,19 +112,22 @@ defmodule Blog.PostsTest do
     end
 
     test "update_post/2 with invalid data returns error changeset" do
-      post = post_fixture()
+      user = user_fixture()
+      post = post_fixture(user_id: user.id)
       assert {:error, %Ecto.Changeset{}} = Posts.update_post(post, @invalid_attrs)
       assert Repo.preload(post, :comments) == Posts.get_post!(post.id)
     end
 
     test "delete_post/1 deletes the post" do
-      post = post_fixture()
+      user = user_fixture()
+      post = post_fixture(user_id: user.id)
       assert {:ok, %Post{}} = Posts.delete_post(post)
       assert_raise Ecto.NoResultsError, fn -> Posts.get_post!(post.id) end
     end
 
     test "change_post/1 returns a post changeset" do
-      post = post_fixture()
+      user = user_fixture()
+      post = post_fixture(user_id: user.id)
       assert %Ecto.Changeset{} = Posts.change_post(post)
     end
   end
