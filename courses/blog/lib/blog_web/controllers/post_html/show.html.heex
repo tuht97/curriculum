@@ -16,6 +16,9 @@
   <:item title="Content"><%= @post.content %></:item>
   <:item title="Published on"><%= @post.published_on  %></:item>
   <:item title="Visible"><%= @post.visible %></:item>
+  <:item title="Tags">
+    <%= Enum.map(@post.tags, & &1.name) |> Enum.join(", ") %>
+  </:item>
 </.list>
 
 

@@ -1,14 +1,17 @@
 defmodule Blog.PostsTest do
   use Blog.DataCase
 
+  alias Blog.Comments
   alias Blog.Posts
+  alias Blog.Tags
+  alias Blog.Posts.Post
+
+  import Blog.AccountsFixtures
+  import Blog.CommentsFixtures
+  import Blog.PostsFixtures
+  import Blog.TagsFixtures
 
   describe "posts" do
-    alias Blog.Posts.Post
-
-    import Blog.PostsFixtures
-    import Blog.AccountsFixtures
-
     @invalid_attrs %{title: nil, subtitle: nil, content: nil}
 
     test "list_posts/0 with no filter returns all posts" do
@@ -45,27 +48,52 @@ defmodule Blog.PostsTest do
       # non-matching
       assert Posts.list_posts("Non-Matching") == []
       # exact match
-      assert Posts.list_posts("Title") == [post]
+      assert Posts.list_posts("Title") |> Repo.preload([:tags]) == [post]
       # partial match end
-      assert Posts.list_posts("tle") == [post]
+      assert Posts.list_posts("tle") |> Repo.preload([:tags]) == [post]
       # partial match front
-      assert Posts.list_posts("Titl") == [post]
+      assert Posts.list_posts("Titl") |> Repo.preload([:tags]) == [post]
       # partial match middle
-      assert Posts.list_posts("itl") == [post]
+      assert Posts.list_posts("itl") |> Repo.preload([:tags]) == [post]
       # case insensitive lower
-      assert Posts.list_posts("title") == [post]
+      assert Posts.list_posts("title") |> Repo.preload([:tags]) == [post]
       # case insensitive upper
-      assert Posts.list_posts("TITLE") == [post]
+      assert Posts.list_posts("TITLE") |> Repo.preload([:tags]) == [post]
       # case insensitive and partial match
-      assert Posts.list_posts("ITL") == [post]
+      assert Posts.list_posts("ITL") |> Repo.preload([:tags]) == [post]
       # empty
-      assert Posts.list_posts("") == [post]
+      assert Posts.list_posts("") |> Repo.preload([:tags]) == [post]
     end
 
     test "get_post!/1 returns the post with given id" do
       user = user_fixture()
-      post = post_fixture(title: "Title", user_id: user.id)
-      assert Posts.get_post!(post.id) == Repo.preload(post, :comments)
+      post = post_fixture(user_id: user.id)
+      retrieved_post = Posts.get_post!(post.id)
+      assert retrieved_post.id == post.id
+      assert retrieved_post.title == post.title
+      assert retrieved_post.visible == post.visible
+      assert retrieved_post.published_on == post.published_on
+    end
+
+    test "create_post/1 with tags" do
+      user = user_fixture()
+      tag1 = tag_fixture()
+      tag2 = tag_fixture()
+
+      valid_attrs1 = %{content: "some content", title: "post 1", user_id: user.id, visible: true}
+      valid_attrs2 = %{content: "some content", title: "post 2", user_id: user.id, visible: true}
+
+      assert {:ok, %Post{} = post1} = Posts.create_post(valid_attrs1, [tag1, tag2])
+      assert {:ok, %Post{} = post2} = Posts.create_post(valid_attrs2, [tag1])
+
+      # posts have many tags
+      assert Repo.preload(post1, :tags).tags == [tag1, tag2]
+      assert Repo.preload(post2, :tags).tags == [tag1]
+
+      # tags have many posts
+      # we preload posts: [:tags] because posts contain the list of tags when created
+      assert Repo.preload(tag1, posts: [:tags]).posts == [post1, post2]
+      assert Repo.preload(tag2, posts: [:tags]).posts == [post1]
     end
 
     test "create_post/1 with valid data creates a post" do
@@ -115,7 +143,7 @@ defmodule Blog.PostsTest do
       user = user_fixture()
       post = post_fixture(user_id: user.id)
       assert {:error, %Ecto.Changeset{}} = Posts.update_post(post, @invalid_attrs)
-      assert Repo.preload(post, :comments) == Posts.get_post!(post.id)
+      assert Repo.preload(post, [:comments, :user]) == Posts.get_post!(post.id)
     end
 
     test "delete_post/1 deletes the post" do
