@@ -48,7 +48,7 @@ defmodule Blog.Posts do
 
   """
   def get_post!(id),
-    do: from(p in Post, preload: [:user, :tags, comments: [:user]]) |> Repo.get!(id)
+    do: from(p in Post, preload: [:user, :tags, :cover_image, comments: [:user]]) |> Repo.get!(id)
 
   @doc """
   Creates a post.
@@ -82,6 +82,7 @@ defmodule Blog.Posts do
   """
   def update_post(%Post{} = post, attrs, tags \\ []) do
     post
+    |> Repo.preload(:cover_image)
     |> Post.changeset(attrs, tags)
     |> Repo.update()
   end

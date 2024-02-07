@@ -1,6 +1,7 @@
 defmodule BlogWeb.PostControllerTest do
   use BlogWeb.ConnCase
   alias Blog.Posts
+  alias Blog.Posts.CoverImage
 
   import Blog.PostsFixtures
   import Blog.AccountsFixtures
@@ -54,6 +55,34 @@ defmodule BlogWeb.PostControllerTest do
       assert redirected_to(conn) == ~p"/posts/#{id}"
 
       assert Posts.get_post!(id).tags == [tag1, tag2]
+    end
+
+    test "create post with cover image", %{conn: conn} do
+      user = user_fixture()
+      conn = log_in_user(conn, user)
+
+      create_attrs = %{
+        content: "some content",
+        title: "some title",
+        visible: true,
+        published_on: DateTime.utc_now(),
+        user_id: user.id,
+        cover_image: %{
+          url: "https://www.example.com/image.png"
+        }
+      }
+
+      conn = post(conn, ~p"/posts", post: create_attrs)
+
+      assert %{id: id} = redirected_params(conn)
+      assert redirected_to(conn) == ~p"/posts/#{id}"
+
+      conn = get(conn, ~p"/posts/#{id}")
+
+      assert %CoverImage{url: "https://www.example.com/image.png"} =
+               Posts.get_post!(id).cover_image
+
+      assert html_response(conn, 200) =~ "https://www.example.com/image.png"
     end
 
     test "redirects to show when data is valid", %{conn: conn} do
@@ -136,6 +165,26 @@ defmodule BlogWeb.PostControllerTest do
 
       assert redirected_to(conn) == ~p"/posts/#{post}"
     end
+
+    test "with cover image", %{conn: conn} do
+      user = user_fixture()
+      post = post_fixture(user_id: user.id)
+      conn = log_in_user(conn, user)
+
+      conn =
+        put(conn, ~p"/posts/#{post}",
+          post: %{cover_image: %{url: "https://www.example.com/image.png"}}
+        )
+
+      assert redirected_to(conn) == ~p"/posts/#{post}"
+
+      conn = get(conn, ~p"/posts/#{post}")
+
+      assert %CoverImage{url: "https://www.example.com/image.png"} =
+               Posts.get_post!(post.id).cover_image
+
+      assert html_response(conn, 200) =~ "https://www.example.com/image.png"
+    end
   end
 
   describe "delete post" do
@@ -149,6 +198,20 @@ defmodule BlogWeb.PostControllerTest do
                "You can only edit or delete your own posts."
 
       assert redirected_to(conn) == ~p"/posts/#{post}"
+    end
+
+    test "deletes chosen post with cover image", %{conn: conn} do
+      user = user_fixture()
+
+      post =
+        post_fixture(user_id: user.id, cover_image: %{url: "https://www.example.com/image.png"})
+
+      conn = conn |> log_in_user(user) |> delete(~p"/posts/#{post}")
+      assert redirected_to(conn) == ~p"/posts"
+
+      assert_error_sent(404, fn ->
+        get(conn, ~p"/posts/#{post}")
+      end)
     end
   end
 
