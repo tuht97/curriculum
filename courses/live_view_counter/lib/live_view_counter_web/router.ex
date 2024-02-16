@@ -18,6 +18,7 @@ defmodule LiveViewCounterWeb.Router do
     pipe_through(:browser)
 
     live("/", CounterLive, :counter)
+    live("/math-game", MathGameLive, :math_game)
   end
 
   # Other scopes may use custom stacks.
