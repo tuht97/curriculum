@@ -18,10 +18,12 @@ defmodule PicChatWeb.MessageLive.FormComponent do
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
-      >
+        >
         <.input field={@form[:content]} type="text" label="Content" />
+        <!-- Add the hidden user_id field -->
+        <.input field={@form[:user_id]} type="hidden" value={@current_user.id} />
         <:actions>
-          <.button phx-disable-with="Saving...">Save Message</.button>
+        <.button phx-disable-with="Saving...">Save Message</.button>
         </:actions>
       </.simple_form>
     </div>

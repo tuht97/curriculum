@@ -19,7 +19,7 @@ defmodule PicChat.Messages do
   """
   def list_messages do
     Message
-    |> from(order_by: [desc: :inserted_at, desc: :id])
+    |> from(order_by: [desc: :inserted_at, desc: :id], preload: [:user])
     |> Repo.all()
   end
 
